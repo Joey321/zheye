@@ -31,7 +31,7 @@ export default defineComponent({
     }
   },
   setup (props) {
-    // 重新计算 为无avatar的项添加默认avatar
+    // 重新计算 为无avatar的专栏添加默认avatar
     const columnList = computed(() => {
       return props.list.map(column => {
         if (!column.avatar) {
