@@ -39,9 +39,6 @@ const store = createStore({
   },
   // 相当于vuex中的computed
   getters: {
-    fn (state) {
-      return state.columns.filter(c => c.id > 2).length
-    },
     getColumnById: (state) => (id: number) => {
       // 检查一下id类型
       // eslint-disable-next-line eqeqeq

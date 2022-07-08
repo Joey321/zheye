@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import store from './store'
 
 const routerHistory = createWebHistory()
 const router = createRouter({
@@ -12,7 +13,9 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import(/* webpackChunkName: "Login" */'./views/Login.vue')
+      component: () => import(/* webpackChunkName: "Login" */'./views/Login.vue'),
+      // 已经登录要到首页
+      meta: { requiredAlreadyLogin: true }
     },
     {
       path: '/column/:id',
@@ -22,9 +25,24 @@ const router = createRouter({
     {
       path: '/create',
       name: 'create',
-      component: () => import(/* webpackChunkName: "ColumnDetail" */'./views/CreatePost.vue')
+      component: () => import(/* webpackChunkName: "ColumnDetail" */'./views/CreatePost.vue'),
+      // 创建文章需要登录
+      meta: { requiredLogin: true }
     }
   ]
+})
+router.beforeEach((to, from, next) => {
+  // 需要登录且未登录则跳转登录
+  if (!store.state.user.isLogin && to.meta.requiredLogin) {
+    const login = { name: 'login' }
+    next(login)
+    // 已经登录访问登录页则跳转首页
+  } else if (store.state.user.isLogin && to.meta.requiredAlreadyLogin) {
+    const home = { name: 'home' }
+    next(home)
+  } else {
+    next()
+  }
 })
 
 export default router
