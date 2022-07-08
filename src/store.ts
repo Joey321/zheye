@@ -43,10 +43,13 @@ const store = createStore({
       return state.columns.filter(c => c.id > 2).length
     },
     getColumnById: (state) => (id: number) => {
-      return state.columns.find(c => c.id === id)
+      // 检查一下id类型
+      // eslint-disable-next-line eqeqeq
+      return state.columns.find(c => c.id == id)
     },
     getPostsById: (state) => (id: number) => {
-      return state.posts.filter(p => p.columnId === id)
+      // eslint-disable-next-line eqeqeq
+      return state.posts.filter(p => p.columnId == id)
     }
   }
 })

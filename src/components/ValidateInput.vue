@@ -29,7 +29,7 @@ import { emitter } from './ValidateForm.vue'
 // 邮箱规则
 const emailReg = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 // 密码规则
-// const passwordReg = /^.{3,20}$/
+const passwordReg = /^.{3,20}$/
 interface RuleProp {
   type: 'required' | 'email' | 'password';
   message: string
@@ -41,8 +41,8 @@ export default defineComponent({
   name: 'ValidateInput',
   props: {
     rules: Array as PropType<RulesProp>,
-    emailValue: String,
-    // passwordValue: String,
+    modelValue: String,
+    passwordValue: String,
     label: {
       type: String,
       default: '标签'
@@ -54,9 +54,10 @@ export default defineComponent({
   },
   // 禁止根元素继承属性 可配合$attrs使用，使父元素不添加非props属性，子元素添加
   inheritAttrs: false,
+  emits: ['update:modelValue'],
   setup (props, context) {
     const inputRef = reactive({
-      val: props.emailValue || '',
+      val: props.modelValue || '',
       error: false,
       message: ''
     })
@@ -68,7 +69,7 @@ export default defineComponent({
           switch (rule.type) {
             case 'required': passed = (inputRef.val.trim() !== ''); break
             case 'email': passed = emailReg.test(inputRef.val); break
-            // case 'password': passed = passwordReg.test(inputRef.val); break
+            case 'password': passed = passwordReg.test(inputRef.val); break
             default: break
           }
           return passed
@@ -82,7 +83,7 @@ export default defineComponent({
       const targetVal = (e.target as HTMLInputElement).value
       inputRef.val = targetVal
       // console.log('-----', targetVal)
-      context.emit('update:emailValue', targetVal)
+      context.emit('update:modelValue', targetVal)
       // context.emit('update:passwordValue', targetVal)
     }
     onMounted(() => {

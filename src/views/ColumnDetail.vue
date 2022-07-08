@@ -29,7 +29,7 @@ export default defineComponent({
     const route = useRoute()
     const store = useStore()
     // +转字符
-    const currentId = +route.params.id
+    const currentId = route.params.id
     // const column = testData.find(c => c.id === currentId) // find返回id相等的第一个元素
     // const list = testPosts.filter(p => p.columnId === currentId)// filter返回id相等的元素组成的对象
     // 以下两行报错？

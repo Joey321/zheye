@@ -2,26 +2,24 @@
   <div class="container">
     <GlobalHeader :user="currentUser"/>
     <ColumnList :list="testData"/>
-    <ValidateForm @submit-form="onSubmitForm">
+    <ValidateForm @form-submit="onSubmitForm">
       <ValidateInput
         :rules="emailRules"
-        v-model:emailValue="emailValue"
+        v-model="emailValue"
         label="邮箱"
         placeholder="请输入邮箱"
+        ref="emailRef"
       />
-      <div>
-        {{emailValue}}
-      </div>
-      <!-- <ValidateInput
+      <ValidateInput
         :rules="passwordRules"
-        v-model:passwordValue="passwordValue"
+        v-model="passwordValue"
         label="密码"
         placeholder="请输入密码"
+        ref="passwordRef"
       />
-      {{passwordValue}} -->
       <template #submit>
         <button type="submit" class="btn btn-primary">提交</button>
-        <!-- <button type="button" class="btn btn-danger" @click="handleClear">清空</button> -->
+        <button type="button" class="btn btn-danger mx-3" @click="handleClear">清空</button>
       </template>
     </ValidateForm>
     <RouterView />
@@ -41,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch, nextTick, computed } from 'vue'
+import { defineComponent, ref, computed } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import ColumnList from './components/ColumnList.vue'
 import GlobalHeader from './components/GlobalHeader.vue'
@@ -80,22 +78,7 @@ import { useStore } from 'vuex'
 //   id: 1,
 //   name: 'zhangsan'
 // }
-const emailValue = ref('11')
-const passwordValue = ref('22')
-const onSubmitForm = (result: boolean) => {
-  console.log(`监听到submit-form：${result}`)
-  watch(emailValue, (newEmailValue: string) => {
-    emailValue.value = newEmailValue
-    if (!result) {
-      nextTick(() => {
-        emailValue.value = ''
-      })
-    }
-  })
-}
-const handleClear = () => {
-  emailValue.value = ''
-}
+
 export default defineComponent({
   name: 'App',
   components: {
@@ -115,6 +98,22 @@ export default defineComponent({
     ]
     const store = useStore()
     const currentUser = computed(() => store.state.user)
+    const emailValue = ref('')
+    const passwordValue = ref('')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const emailRef = ref<null | HTMLElement | any>(null)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const passwordRef = ref<null | HTMLElement | any>(null)
+    const onSubmitForm = (result: boolean) => {
+      console.log(`监听到submit-form：${result}`)
+    }
+    const handleClear = () => {
+      console.log('emailRef', emailRef.value.inputRef)
+      emailRef.value.inputRef.val = ''
+      passwordRef.value.inputRef.val = ''
+      emailValue.value = ''
+      passwordValue.value = ''
+    }
     return {
       testData,
       currentUser,
@@ -123,7 +122,9 @@ export default defineComponent({
       emailValue,
       passwordValue,
       onSubmitForm,
-      handleClear
+      handleClear,
+      emailRef,
+      passwordRef
     }
   }
 })

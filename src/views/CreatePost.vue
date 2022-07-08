@@ -87,7 +87,7 @@ export default defineComponent({
             createdAt: new Date().toLocaleString(),
             columnId
           }
-          store.commit('createpost', newPost)
+          store.commit('createPost', newPost)
           const pushObj = { name: 'column', params: { id: columnId } }
           router.push(pushObj)
         }
