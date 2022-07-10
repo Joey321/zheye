@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+import axios from 'axios'
 import { testData, testPosts, ColumnProps, PostProps } from './testData'
 
 interface UserProps {
@@ -35,6 +36,29 @@ const store = createStore({
     },
     createPost (state, newPost) {
       state.posts.push(newPost)
+    },
+    fetchColumns (state, rowData) {
+      // state.columns = rowData.data.list
+      console.log('fetchColumns数据', rowData)
+    },
+    fetchColumn (state, rowData) {
+      // state.columns = [rowData.data]
+      console.log('fetchColumn数据', rowData)
+    }
+  },
+  actions: {
+    fetchColumns (context) {
+      const params = { params: { key: 'hello' } }
+      axios.get('/columns', params).then(res => {
+        console.log('----fetchColumns', res)
+        context.commit('fetchColumns', res.data)
+      })
+    },
+    fetchColumn ({ commit }, cid) {
+      axios.get(`/colum/${cid}`).then(res => {
+        console.log('----fetchColumn', res)
+        commit('fetchColumn', res.data)
+      })
     }
   },
   // 相当于vuex中的computed
