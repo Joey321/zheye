@@ -1,4 +1,4 @@
-import { createStore } from 'vuex'
+import { createStore, Commit } from 'vuex'
 import axios from 'axios'
 import { testData, testPosts, ColumnProps, PostProps } from './testData'
 
@@ -17,9 +17,21 @@ export interface GlobalDataProps {
   PostProps: PostProps[],
 }
 
+// 抽象actions中异步方法重复逻辑
+const getAndCommit = async (url: string, mutationName: string, commit: Commit) => {
+  // 这段逻辑写到main.js 拦截器interceptors去
+  // commit('setLoading', true)
+  // 延时2秒
+  // await new Promise(resolve => setTimeout(resolve, 2000))
+  const { data } = await axios.get(url)
+  commit(mutationName, data)
+  // commit('setLoading', false)
+}
+
 const store = createStore({
   // 初始状态
   state: {
+    loading: false,
     columns: testData,
     posts: testPosts,
     user: {
@@ -28,7 +40,7 @@ const store = createStore({
       columnId: '1'
     }
   },
-  // 方法
+  // 同步方法
   mutations: {
     login (state) {
       // 对象展开运算符，相同属性后者覆盖前者
@@ -44,21 +56,24 @@ const store = createStore({
     fetchColumn (state, rowData) {
       // state.columns = [rowData.data]
       console.log('fetchColumn数据', rowData)
+    },
+    fetchPosts (state, rowData) {
+      console.log('fetchPosts数据', rowData)
+    },
+    setLoading (state, status) {
+      state.loading = status
     }
   },
+  // 异步方法
   actions: {
-    fetchColumns (context) {
-      const params = { params: { key: 'hello' } }
-      axios.get('/columns', params).then(res => {
-        console.log('----fetchColumns', res)
-        context.commit('fetchColumns', res.data)
-      })
+    async fetchColumns (context) {
+      getAndCommit('/columns', 'fetchColumns', context.commit)
     },
-    fetchColumn ({ commit }, cid) {
-      axios.get(`/colum/${cid}`).then(res => {
-        console.log('----fetchColumn', res)
-        commit('fetchColumn', res.data)
-      })
+    async fetchColumn ({ commit }, cid) {
+      getAndCommit(`/colums/${cid}`, 'fetchColumn', commit)
+    },
+    async fetchPosts ({ commit }, cid) {
+      getAndCommit(`/colums/${cid}/posts`, 'fetchPosts', commit)
     }
   },
   // 相当于vuex中的computed

@@ -2,6 +2,7 @@
   <div class="container">
     <GlobalHeader :user="currentUser"/>
     <RouterView />
+    <Loader text='拼命加载中...' background="rgba(0, 0, 0, .2)" v-if="isLoading" />
     <!-- 底部 -->
     <footer class="text-center py-4 text-secondary bg-light mt-6">
       <small>
@@ -22,16 +23,20 @@ import { defineComponent, computed } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import GlobalHeader from './components/GlobalHeader.vue'
 import store from './store'
+import Loader from './components/Loader.vue'
 
 export default defineComponent({
   name: 'App',
   components: {
-    GlobalHeader
+    GlobalHeader,
+    Loader
   },
   setup () {
     const currentUser = computed(() => store.state.user)
+    const isLoading = computed(() => store.state.loading)
     return {
-      currentUser
+      currentUser,
+      isLoading
     }
   }
 })
