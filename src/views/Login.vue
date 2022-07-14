@@ -30,6 +30,7 @@ import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import ValidateInput, { RulesProp } from '../components/ValidateInput.vue'
 import ValidateForm from '../components/ValidateForm.vue'
+import createMessage from '../components/createMessage'
 export default defineComponent({
   name: 'Login',
   components: {
@@ -57,9 +58,23 @@ export default defineComponent({
       console.log(`监听到form-submit：${result}`)
       if (result) {
         console.log('result', result)
-        router.push('/')
+        const payload = {
+          email: emailValue.value,
+          password: passwordValue.value
+        }
+        console.log('payload', payload)
+        // 登录然后获取用户信息
+        // store.dispatch('loginAndFetch', payload).then(data => {
+        // console.log('拿到登录响应的用户数据', data)
+        //   router.push('/')
+        // }).catch(e => {
+        // console.log(e) //捕获错误 避免main.js中return Promise.reject(error)错误提示：Promise遇到未回收的reject错误都会在浏览器报错
+        // })
         store.commit('login')
-        console.log(store.state.user)
+        createMessage('登录成功，两秒后跳转首页', 'success')
+        setTimeout(() => {
+          router.push('/')
+        }, 2000)
       }
     }
     const handleClear = () => {

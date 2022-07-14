@@ -11,7 +11,7 @@
         <Dropdown :title="`欢迎 ${user.name}`">
           <DropdownItem><router-link class="dropdown-item" to="/create">新建文章</router-link></DropdownItem>
           <DropdownItem :disabled="true"><a class="dropdown-item" href="#">编辑资料</a></DropdownItem>
-          <DropdownItem><a class="dropdown-item" href="#">退出登录</a></DropdownItem>
+          <DropdownItem><a class="dropdown-item" href="#" @click="loginOut">退出登录</a></DropdownItem>
         </Dropdown>
       </li>
     </ul>
@@ -22,6 +22,7 @@
 import { defineComponent, PropType } from 'vue'
 import Dropdown from './Dropdown.vue'
 import DropdownItem from './DropdownItem.vue'
+import { useRouter } from 'vue-router'
 
 export interface UserProps {
   isLogin: boolean,
@@ -42,7 +43,13 @@ export default defineComponent({
     DropdownItem
   },
   setup () {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const router = useRouter()
+    const loginOut = () => {
+      localStorage.removeItem('token')
+    }
     return {
+      loginOut
     }
   }
 })
