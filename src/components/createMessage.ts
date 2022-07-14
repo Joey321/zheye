@@ -9,7 +9,7 @@ const createMessage = (message: string, type: MessageType, timeout = 2000): void
     message,
     type
   })
-  // 2.组件挂载节点，时间到了卸载
+  // 2.组件实例挂载节点，设置延时卸载组件并移除节点
   const mountNode = document.createElement('div')
   document.body.appendChild(mountNode)
   messageInstance.mount(mountNode)

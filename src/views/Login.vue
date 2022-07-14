@@ -8,13 +8,18 @@
         placeholder="请输入邮箱"
         ref="emailRef"
       />
-      {{emailValue}}
       <ValidateInput
         :rules="passwordRules"
         v-model="passwordValue"
         label="密码"
         placeholder="请输入密码"
         ref="passwordRef"
+      />
+      <ValidateInput
+        :rules="repeatPasswordRules"
+        v-model="repeatPassword"
+        label="确认密码"
+        placeholder="请再次输入密码"
       />
       <template #submit>
         <button type="submit" class="btn btn-primary">提交</button>
@@ -48,8 +53,19 @@ export default defineComponent({
       { type: 'required', message: '密码不能为空' },
       { type: 'password', message: '密码长度3~20位' }
     ]
-    const emailValue = ref('1111')
+    const repeatPasswordRules: RulesProp = [
+      { type: 'required', message: '确认密码不能为空' },
+      {
+        type: 'custom',
+        validator () {
+          return passwordValue.value === repeatPassword.value
+        },
+        message: '两次输入密码必须相同'
+      }
+    ]
+    const emailValue = ref('1111@1')
     const passwordValue = ref('222')
+    const repeatPassword = ref('233')
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     // const emailRef = ref<null | HTMLElement | any>(null)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -89,10 +105,12 @@ export default defineComponent({
       router,
       emailRules,
       passwordRules,
+      repeatPasswordRules,
       onSubmitForm,
       handleClear,
       emailValue,
-      passwordValue
+      passwordValue,
+      repeatPassword
     }
   }
 })
