@@ -6,7 +6,7 @@
           <img :src="column.avatar" :alt="column.title" class="rounded-circle border border-light w-25 my-3" />
           <h5>{{column.title}}</h5>
           <p>{{column.description}}</p>
-          <router-link :to="`/column/${column.id}`" class="btn btn-outline-primary">进入专栏</router-link>
+          <router-link :to="`/column/${column.id}`" class="btn btn-outline-primary" @click="machingColumnIdToWritePost(column.id)">进入专栏</router-link>
 
           <!-- <RouterLink :to="{name: 'column', params:{id: column.id}}" class="btn btn-outline-primary">进入专栏</RouterLink>
           {{`/column/${column.id}`}}
@@ -19,6 +19,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType, computed } from 'vue'
+import store from '../store'
 export interface ColumnProps {
   id: number,
   avatar?: string,
@@ -44,8 +45,12 @@ export default defineComponent({
         return column
       })
     })
+    const machingColumnIdToWritePost = (id: string) => {
+      store.state.user.columnId = id
+    }
     return {
-      columnList
+      columnList,
+      machingColumnIdToWritePost
     }
   }
 })

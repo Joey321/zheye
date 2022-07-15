@@ -9,7 +9,7 @@
         <p class="text-muted">{{column.description}}</p>
       </div>
     </div>
-     <pre>{{route}}</pre>
+     <!-- <pre>{{route}}</pre> -->
     <PostList :list="list"></PostList>
   </div>
 </template>
