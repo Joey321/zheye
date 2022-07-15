@@ -5,7 +5,6 @@
     <RouterView />
     <Loader text='拼命加载中...' background="rgba(0, 0, 0, .2)" v-if="isLoading" />
     <!-- <Message :message="'loginMessage'" :type="'success'" /> -->
-    <Uploader action="/upload"/>
     <!-- 底部 -->
     <footer class="text-center py-4 text-secondary bg-light mt-6">
       <small>
@@ -29,14 +28,12 @@ import store from './store'
 import Loader from './components/Loader.vue'
 // import Message from './components/Message.vue'
 import createMessage from './components/createMessage'
-import Uploader from './components/Uploader.vue'
 
 export default defineComponent({
   name: 'App',
   components: {
     GlobalHeader,
-    Loader,
-    Uploader
+    Loader
   },
   setup () {
     // const loginMessage = ref('')
@@ -48,6 +45,8 @@ export default defineComponent({
       // 初始化有token且未登录
       // 在login设置Authorization头并发送获取用户信息请求
       // 请求成功显示currentUser
+      console.log(token, '-----111')
+      console.log(isLogin, '-----112')
       if (token && !isLogin) {
         // store.dispatch('loginAndFetch')
         store.commit('login')

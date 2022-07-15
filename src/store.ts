@@ -22,6 +22,17 @@ export interface GlobalErrorProps {
   message?: string;
 }
 
+export interface ResponseData<P = null > {
+  code: number;
+  msg: string;
+  data: P
+}
+export interface ImageProps {
+  _id?: string;
+  url?: string;
+  createdAt?: string;
+}
+
 // 抽象actions中异步方法重复逻辑
 const getAndCommit = async (url: string, mutationName: string, commit: Commit) => {
   const { data } = await axios.get(url)

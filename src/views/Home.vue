@@ -11,6 +11,15 @@
         </div>
       </div>
     </section>
+    <Uploader
+      action="/upload"
+      :beforeUpload="beforeUpload"
+      @file-uploaded="fileUploaded"
+      @uploaded-error="uploadedError">
+      <template #image="dataProps">
+        {{dataProps}}
+      </template>
+    </Uploader>
     <h4 class="font-weight-bold text-center">发现精彩</h4>
     <h4>{{isLoading}}</h4>
     <column-list :list="list"></column-list>
@@ -21,23 +30,44 @@
 import { defineComponent, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import ColumnList from '../components/ColumnList.vue'
+import Uploader from '../components/Uploader.vue'
+import createMessage from '../components/createMessage'
+import { ResponseData, ImageProps } from '../store'
 
 export default defineComponent({
   name: 'Home',
   components: {
-    ColumnList
+    ColumnList,
+    Uploader
   },
   setup () {
     const store = useStore()
     const list = computed(() => store.state.columns)
     const isLoading = computed(() => store.state.loading)
+    const beforeUpload = (file: File) => {
+      // 限制文件格式
+      const isJPG = file.type === 'image/jpeg'
+      if (!isJPG) {
+        createMessage('只能上传JPG格式文件', 'error')
+      }
+      return isJPG
+    }
+    const fileUploaded = (rawData: ResponseData<ImageProps>) => {
+      createMessage(`上传图片数据:${rawData.data}`, 'default')
+    }
+    const uploadedError = (rawData: ResponseData<ImageProps>) => {
+      createMessage(`上传错误:${rawData}`, 'error')
+    }
     onMounted(() => {
       store.dispatch('fetchColumns')
       store.dispatch('fetchColumn')
     })
     return {
       list,
-      isLoading
+      isLoading,
+      beforeUpload,
+      fileUploaded,
+      uploadedError
     }
   }
 })
