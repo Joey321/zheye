@@ -5,7 +5,7 @@
     <RouterView />
     <Loader text='拼命加载中...' background="rgba(0, 0, 0, .2)" v-if="isLoading" />
     <!-- <Message :message="'loginMessage'" :type="'success'" /> -->
-    <Uploader />
+    <Uploader action="/upload"/>
     <!-- 底部 -->
     <footer class="text-center py-4 text-secondary bg-light mt-6">
       <small>
