@@ -37,6 +37,7 @@ export interface ImageProps {
 const getAndCommit = async (url: string, mutationName: string, commit: Commit) => {
   const { data } = await axios.get(url)
   commit(mutationName, data)
+  return data
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const postAndCommit = async (url: string, mutationName: string, commit: Commit, payload: any) => {
@@ -76,6 +77,11 @@ const store = createStore({
       // axios.defaults.headers.common.Authorization = `Bearer ${token}`
       console.log('login数据', rawData)
     },
+    loginout (state) {
+      state.token = ''
+      localStorage.removeItem('token')
+      delete axios.defaults.headers.common.Authorization
+    },
     createPost (state, newPost) {
       state.posts.push(newPost)
     },
@@ -104,20 +110,20 @@ const store = createStore({
   // 异步方法
   actions: {
     fetchColumns (context) {
-      getAndCommit('/columns', 'fetchColumns', context.commit)
+      return getAndCommit('/columns', 'fetchColumns', context.commit)
     },
     fetchColumn ({ commit }, cid) {
-      getAndCommit(`/colums/${cid}`, 'fetchColumn', commit)
+      return getAndCommit(`/colums/${cid}`, 'fetchColumn', commit)
     },
     fetchPosts ({ commit }, cid) {
-      getAndCommit(`/colums/${cid}/posts`, 'fetchPosts', commit)
+      return getAndCommit(`/colums/${cid}/posts`, 'fetchPosts', commit)
     },
     loginOnline ({ commit }, payload) {
       // 返回postAndCommit，postAndCommit中返回data (Promise) 这样调用时.then就能拿到data
       return postAndCommit('/user/login', 'loginOnline', commit, payload)
     },
     fetchCurrentUser ({ commit }) {
-      getAndCommit('user/current', 'fetchCurrentUser', commit)
+      return getAndCommit('user/current', 'fetchCurrentUser', commit)
     },
     // 组合登录和获取用户信息的异步操作
     loginAndFetch ({ dispatch }, loginData) {

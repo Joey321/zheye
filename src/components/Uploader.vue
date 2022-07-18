@@ -1,6 +1,6 @@
 <template>
   <div class="file-upload">
-    <div class="file-upload-container" @click.prevent="triggerUpload">
+    <div class="file-upload-container" @click.prevent="triggerUpload" v-bind="$attrs">
       <slot v-if="fileStatus === 'success'" name="uploaded">
         <button class="btn btn-primary">上传成功</button>
       </slot>
@@ -42,6 +42,7 @@ export default defineComponent({
       type: Function as PropType<CheckFunction>
     }
   },
+  inheritAttrs: false,
   emits: ['file-uploaded', 'uploaded-error'],
   setup (props, { emit }) {
     const fileInput = ref<null | HTMLInputElement>(null)

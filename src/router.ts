@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import store from './store'
+import createMessage from './components/createMessage'
 
 const routerHistory = createWebHistory()
 const router = createRouter({
@@ -44,5 +45,35 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
+// 完整登录逻辑
+// const { user, token } = store.state
+//   const { requiredAlreadyLogin, requiredLogin } = to.meta
+//   if (!user.isLogin) {
+//     if (requiredAlreadyLogin) {
+//       next('/')
+//     } else {
+//       next()
+//     }
+//   } else {
+//     if (!token) {
+//       if (requiredLogin) {
+//         next('login')
+//       } else {
+//         next()
+//       }
+//     } else {
+//       store.dispatch('fetchCurrentUser').then(() => {
+//         if (requiredAlreadyLogin) {
+//           next('/')
+//         } else {
+//           next()
+//         }
+//       }).catch(() => {
+//         createMessage('token失效，需要重新登录', 'success')
+//         store.commit('loginout)
+//         next('login')
+//       })
+//     }
+//   }
 
 export default router

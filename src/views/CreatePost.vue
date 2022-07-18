@@ -1,29 +1,25 @@
 <template>
   <div class="create-post-page">
     <h4>{{isEditMode ? '编辑文章' : '新建文章'}}</h4>
-    <!-- <uploader
+    <Uploader
       action="/upload"
       :beforeUpload="uploadCheck"
-      @file-uploaded="handleFileUploaded"
-      :uploaded="uploadedData"
-      class="d-flex align-items-center justify-content-center bg-light text-secondary w-100 my-4"
-    >
-      <h2>点击上传头图</h2>
+      @file-uploaded="fileUploaded"
+      @uploaded-error="uploadedError"
+      class="d-flex align-items-center justify-content-center bg-light text-secondary w-100 my-4">
+      <h1>点击上传头图</h1>
       <template #loading>
-        <div class="d-flex">
-          <div class="spinner-border text-secondary" role="status">
-            <span class="sr-only">Loading...</span>
+        <div d-flex>
+          <div class="spinner-grow" style="width: 3rem; height: 3rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
           </div>
-          <h2>正在上传</h2>
         </div>
       </template>
-      <template #uploaded="dataProps">
-        <div class="uploaded-area">
-          <img :src="dataProps.uploadedData.data.url">
-          <h3>点击重新上传</h3>
-        </div>
+      <!-- 图片回显 -->
+      <template #image="dataProps">
+        <img src="../assets/logo.png" :alt="dataProps">
       </template>
-    </uploader> -->
+    </Uploader>
     <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
         <validate-input
@@ -58,11 +54,16 @@ import ValidateForm from '../components/ValidateForm.vue'
 import { useStore } from 'vuex'
 import { PostProps } from '../testData'
 import { useRouter } from 'vue-router'
+import Uploader from '../components/Uploader.vue'
+import { beforeUploadCheck } from '../components/helper'
+import createMessage from '../components/createMessage'
+import { ResponseData, ImageProps } from '../store'
 export default defineComponent({
   name: 'CreatePost',
   components: {
     ValidateInput,
-    ValidateForm
+    ValidateForm,
+    Uploader
   },
   setup () {
     const titleVal = ref('')
@@ -93,6 +94,24 @@ export default defineComponent({
         }
       }
     }
+    // 文件上传前校验
+    const uploadCheck = (file: File) => {
+      const condition = {
+        format: ['image/jpeg', 'image/png'],
+        size: 1
+      }
+      const result = beforeUploadCheck(file, condition)
+      const { passed, error } = result
+      if (error === 'format') createMessage('图片格式只能为JPG/PNG格式', 'error')
+      if (error === 'size') createMessage('文件大小不能超过1MB', 'error')
+      return passed
+    }
+    const fileUploaded = (rawData: ResponseData<ImageProps>) => {
+      createMessage(`上传图片数据:${rawData.data}`, 'default')
+    }
+    const uploadedError = (rawData: ResponseData<ImageProps>) => {
+      createMessage(`上传错误:${rawData}`, 'error')
+    }
     const isEditMode = false
     return {
       titleRules,
@@ -100,7 +119,10 @@ export default defineComponent({
       contentRules,
       onFormSubmit,
       isEditMode,
-      titleVal
+      titleVal,
+      uploadCheck,
+      fileUploaded,
+      uploadedError
     }
   }
 })
@@ -109,14 +131,13 @@ export default defineComponent({
 .create-post-page .file-upload-container {
   height: 200px;
   cursor: pointer;
-  overflow: hidden;
 }
-.create-post-page .file-upload-container img {
-  width: 100%;
-  height: 100%;
+.create-post-page .file-upload img {
+  width: 10%;
+  height: 10%;
   object-fit: cover;
 }
-.uploaded-area {
+/* .uploaded-area {
   position: relative;
 }
 .uploaded-area:hover h3 {
@@ -129,5 +150,5 @@ export default defineComponent({
   text-align: center;
   width: 100%;
   top: 50%;
-}
+} */
 </style>
