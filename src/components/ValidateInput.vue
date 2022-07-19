@@ -5,18 +5,16 @@
       v-if="tag !== 'textarea'"
       class="form-control"
       :class="{'is-invalid': inputRef.error}"
-      :value="inputRef.val"
+      v-model="inputRef.val"
       @blur="validateInput"
-      @input="updateValue"
       v-bind="$attrs"
     />
     <textarea
       v-else
       class="form-control"
       :class="{'is-invalid': inputRef.error}"
-      :value="inputRef.val"
+      v-model="inputRef.val"
       @blur="validateInput"
-      @input="updateValue"
       v-bind="$attrs"
     ></textarea>
     <div class="invalid-feedback" v-if="inputRef.error">{{inputRef.message}}</div>
@@ -24,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, PropType, onMounted } from 'vue'
+import { defineComponent, reactive, PropType, onMounted, computed } from 'vue'
 import { emitter } from './ValidateForm.vue'
 // 邮箱规则
 const emailReg = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
@@ -58,7 +56,11 @@ export default defineComponent({
   emits: ['update:modelValue'],
   setup (props, context) {
     const inputRef = reactive({
-      val: props.modelValue || '',
+      // 用计算属性监听依赖值的变化并将值发送出去(既监听了props的变化又简化了更新值的操作)
+      val: computed({
+        get: () => props.modelValue || '',
+        set: val => context.emit('update:modelValue', val)
+      }),
       error: false,
       message: ''
     })
@@ -81,20 +83,12 @@ export default defineComponent({
       }
       return true
     }
-    const updateValue = (e: KeyboardEvent) => {
-      const targetVal = (e.target as HTMLInputElement).value
-      inputRef.val = targetVal
-      // console.log('-----', targetVal)
-      context.emit('update:modelValue', targetVal)
-      // context.emit('update:passwordValue', targetVal)
-    }
     onMounted(() => {
       emitter.emit('form-item-created', validateInput)
     })
     return {
       inputRef,
-      validateInput,
-      updateValue
+      validateInput
     }
   }
 })

@@ -24,10 +24,11 @@
       <div class="mb-3">
         <validate-input
           label="文章标题："
-          :rules="titleRules" v-model="titleVal"
+          :rules="titleRules"
+          v-model="titleVal"
           placeholder="请输入文章标题"
           type="text"
-        />
+        />{{titleVal}}
       </div>
       <div class="mb-3">
         <validate-input
@@ -37,7 +38,7 @@
           placeholder="请输入文章详情"
           :rules="contentRules"
           v-model="contentVal"
-        />
+        />{{contentVal}}
       </div>
       <template #submit>
         <button class="btn btn-primary btn-large">{{isEditMode ? '更新文章' : '发表文章'}}

@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import store from './store'
-import createMessage from './components/createMessage'
 
 const routerHistory = createWebHistory()
 const router = createRouter({
