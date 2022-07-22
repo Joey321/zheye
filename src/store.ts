@@ -1,5 +1,5 @@
 import { createStore, Commit } from 'vuex'
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 import { testData, testPosts, ColumnProps, PostProps } from './testData'
 
 interface UserProps {
@@ -44,6 +44,11 @@ const postAndCommit = async (url: string, mutationName: string, commit: Commit, 
   const { data } = await axios.post(url, payload)
   commit(mutationName, data)
   // 返回一个Promise
+  return data
+}
+const asyncAndCommit = async (url: string, mutationName: string, commit: Commit, config: AxiosRequestConfig = { method: 'get' }) => {
+  const { data } = await axios(url, config)
+  commit(mutationName, data)
   return data
 }
 
@@ -105,6 +110,18 @@ const store = createStore({
     fetchCurrentUser (state, rawData) {
       // state.user = { isLogin: true, ...rawData.data }
       console.log('fetchColumns数据', rawData)
+    },
+    updatePost (state, { data }) {
+      state.posts = state.posts.map(post => {
+        if (post.id === data._id) {
+          return data
+        } else {
+          return post
+        }
+      })
+    },
+    deletePost (state, { data }) {
+      state.posts = state.posts.filter(post => post.id !== data._id)
     }
   },
   // 异步方法
@@ -130,6 +147,15 @@ const store = createStore({
       return dispatch('loginOnline', loginData).then(() => {
         return dispatch('fetchCurrentUser')
       })
+    },
+    updatePost ({ commit }, { id, payload }) {
+      return asyncAndCommit(`/posts/${id}`, 'updatePost', commit, {
+        method: 'patch',
+        data: payload
+      })
+    },
+    deletePost ({ commit }, id) {
+      return asyncAndCommit(`/posts/${id}`, 'deletePost', commit, { method: 'delete' })
     }
   },
   // 相当于vuex中的computed
@@ -140,6 +166,10 @@ const store = createStore({
       return state.columns.find(c => c.id == id)
     },
     getPostsById: (state) => (id: number) => {
+      // eslint-disable-next-line eqeqeq
+      return state.posts.filter(p => p.columnId == id)
+    },
+    deletePostsById: (state) => (id: number) => {
       // eslint-disable-next-line eqeqeq
       return state.posts.filter(p => p.columnId == id)
     }

@@ -11,19 +11,29 @@
     </div>
      <!-- <pre>{{route}}</pre> -->
     <PostList :list="list"></PostList>
+    <Modal
+      title="确认删除？"
+      :visible="isVisible"
+      @modal-on-close="onClose"
+      @modal-on-confirm="hideAndDelete">
+      <p>{{`删除名为${column.title}的文章`}}</p>
+    </Modal>
+    <button @click.prevent="isVisible = true" class="btn btn-danger">删除</button>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
+import { defineComponent, computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 // import { testData, testPosts } from '../testData.ts'
 import { useStore } from 'vuex'
 import PostList from '../components/PostList.vue'
+import Modal from '../components/Modal.vue'
 export default defineComponent({
   name: 'ColumnDetail',
   components: {
-    PostList
+    PostList,
+    Modal
   },
   setup () {
     const route = useRoute()
@@ -38,10 +48,21 @@ export default defineComponent({
 
     const column = computed(() => store.getters.getColumnById(currentId))
     const list = computed(() => store.getters.getPostsById(currentId))
+
+    const isVisible = ref(false)
+    const onClose = () => {
+      isVisible.value = false
+    }
+    const hideAndDelete = () => {
+      isVisible.value = false
+    }
     return {
       column,
       list,
-      route
+      route,
+      isVisible,
+      onClose,
+      hideAndDelete
     }
   }
 })
